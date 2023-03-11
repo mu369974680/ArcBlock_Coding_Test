@@ -14,13 +14,15 @@ router.use('/blockchaininfo/:hash', middleware.user(), (req, res) => {
 
   if (blockchain) {
     logger.info('命中缓存:', req.params.hash);
-    res.json(blockchain);
+    // res.json(blockchain);
   } else {
     Cache.setData(mockBlock);
-
-    delete mockBlock.tx;
-    res.json(mockBlock);
   }
+
+  const copyResult = JSON.parse(JSON.stringify(mockBlock));
+
+  delete copyResult.tx;
+  res.json(copyResult);
 
   //   https
   //     .get(
@@ -45,8 +47,36 @@ router.use('/blockchaininfo/:hash', middleware.user(), (req, res) => {
 });
 
 router.use('/blockchaintx', middleware.user(), (req, res) => {
-  logger.info(req.body);
-  res.json(req.user || {});
+  // page index start with 0
+  const { page, rowsPerPage } = req.body;
+  let blockchain = Cache.getData(req.params.hash);
+
+  if (blockchain) {
+    logger.info('命中缓存:', req.params.hash);
+    // res.json(blockchain);
+  } else {
+    Cache.setData(mockBlock);
+
+    blockchain = mockBlock;
+
+    // res.json(mockBlock);
+  }
+
+  const startIndex = page * rowsPerPage;
+  const endIndex = (page + 1) * rowsPerPage - 1;
+
+  logger.info(startIndex, endIndex);
+
+  const result = {
+    page,
+    rowsPerPage,
+    total: blockchain.tx.length,
+    startIndex,
+    endIndex,
+    rows: blockchain.tx.slice(startIndex, endIndex + 1),
+  };
+
+  res.json(result);
 });
 
 module.exports = router;

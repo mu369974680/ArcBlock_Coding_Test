@@ -1,7 +1,15 @@
-import { Link } from 'react-router-dom';
-import Button from '@mui/material/Button';
+// import { Link } from 'react-router-dom';
+// import Button from '@mui/material/Button';
+import Grid from '@mui/material/Unstable_Grid2';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 import TxTable from '../components/tx-table';
 import BlockInfo from '../components/block-info';
+
 // import { useState } from 'react';
 // import axios from '../libs/api.js';
 
@@ -34,18 +42,44 @@ function Query() {
   //     // console.log(error);
   //   });
 
+  const handleClickSearchBtn = () => {};
+
   return (
     <div>
-      <h1>
+      {/* <h1>
         <Link className="app-link" to="/">
           Back Home
         </Link>
       </h1>
       <h2>Hello, i'm a dapp blocklet</h2>
 
-      <Button variant="contained">Hello World</Button>
-      <BlockInfo />
-      <TxTable />
+      <Button variant="contained">Hello World</Button> */}
+
+      <Grid container spacing={2}>
+        <Grid xs={12}>
+          <FormControl sx={{ m: 1, width: '50ch' }} variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password">Input the blockchain`s hash</InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-password"
+              type="text"
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton aria-label="toggle password visibility" onClick={handleClickSearchBtn} edge="end">
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Input the blockchain`s hash"
+            />
+          </FormControl>
+        </Grid>
+        <Grid xs={12} md={5}>
+          <BlockInfo />
+        </Grid>
+        <Grid xs={12} md={7}>
+          <TxTable />
+        </Grid>
+      </Grid>
     </div>
   );
 }

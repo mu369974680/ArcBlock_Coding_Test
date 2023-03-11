@@ -5,5 +5,11 @@
   "trailingComma": "es5",
   "bracketSameLine": true,
   "semi": true,
-  "singleQuote": true
+  "singleQuote": true,
+  "prettier/prettier": [
+    "error",
+    {
+      "endOfLine": "auto"
+    }
+  ]
 }

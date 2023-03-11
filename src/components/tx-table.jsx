@@ -68,6 +68,7 @@ export default function TxTable() {
     rows: [],
     page: 0,
     rowsPerPage: 10,
+    total: 0,
   });
   const [pageProp, setpageProp] = useState({
     page: 0,

@@ -1,5 +1,6 @@
 // import { Link } from 'react-router-dom';
 // import Button from '@mui/material/Button';
+import { useState } from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import SearchIcon from '@mui/icons-material/Search';
@@ -10,39 +11,19 @@ import FormControl from '@mui/material/FormControl';
 import TxTable from '../components/tx-table';
 import BlockInfo from '../components/block-info';
 
-// import { useState } from 'react';
 // import axios from '../libs/api.js';
 
 function Query() {
-  // useEffect(() => {
-  //   axios
-  //     .post('/api/user')
-  //     .then((response) => {
-  //       console.log(response);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
+  const [hash, setHash] = useState('');
+  const [hashInput, setHashInput] = useState('');
 
-  // axios
-  //   .post('/api/blockchaininfo/00000000000000000007878ec04bb2b2e12317804810f4c26033585b3f81ffaa')
-  //   .then((response) => {
-  //     // console.log(response);
-  //   })
-  //   .catch((error) => {
-  //     // console.log(error);
-  //   });
+  const handleClickSearchBtn = () => {
+    setHash(hashInput);
+  };
 
-  // axios
-  //   .post('/api/blockchaintx', { page: 1 })
-  //   .then((response) => {
-  //     // console.log(response);
-  //   })
-  //   .catch((error) => {
-  //     // console.log(error);
-  //   });
-
-  const handleClickSearchBtn = () => {};
+  const handleInputHash = (e) => {
+    setHashInput(e.target.value);
+  };
 
   return (
     <div>
@@ -57,7 +38,7 @@ function Query() {
 
       <Grid container spacing={2}>
         <Grid xs={12}>
-          <FormControl sx={{ m: 1, width: '50ch' }} variant="outlined">
+          <FormControl sx={{ m: 1, width: '70ch' }} variant="outlined">
             <InputLabel htmlFor="outlined-adornment-password">Input the blockchain`s hash</InputLabel>
             <OutlinedInput
               id="outlined-adornment-password"
@@ -69,12 +50,14 @@ function Query() {
                   </IconButton>
                 </InputAdornment>
               }
+              value={hashInput}
               label="Input the blockchain`s hash"
+              onChange={handleInputHash}
             />
           </FormControl>
         </Grid>
         <Grid xs={12} md={5}>
-          <BlockInfo />
+          <BlockInfo hash={hash} />
         </Grid>
         <Grid xs={12} md={7}>
           <TxTable />

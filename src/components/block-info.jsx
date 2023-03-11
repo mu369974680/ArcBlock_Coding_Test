@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
@@ -13,12 +14,12 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export default function BlockInfo() {
+export default function BlockInfo(props) {
   const [blockInfo, setblockInfo] = useState({});
 
   useEffect(() => {
     axios
-      .post('/api/blockchaininfo/00000000000000000007878ec04bb2b2e12317804810f4c26033585b3f81ffaa')
+      .post(`/api/blockchaininfo/${props.hash}`)
       .then((response) => {
         // console.log(response);
         setblockInfo(response.data);
@@ -26,7 +27,7 @@ export default function BlockInfo() {
       .catch(() => {
         // console.log(error);
       });
-  }, [blockInfo.hash]);
+  }, [blockInfo.hash, props.hash]);
 
   return (
     <Box sx={{ width: '100%' }}>

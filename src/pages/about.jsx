@@ -1,6 +1,26 @@
 import { Link } from 'react-router-dom';
+// import { useEffect } from 'react';
+// import axios from '../libs/api.js';
 
 function About() {
+  // useEffect(() => {
+  //   axios
+  //     .post('/api/user')
+  //     .then((response) => {
+  //       console.log(response);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  //   axios
+  //     .post('/api/blockchain')
+  //     .then((response) => {
+  //       console.log(response);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // });
   return (
     <div>
       <h1>

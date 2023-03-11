@@ -1,4 +1,6 @@
-import axios from 'axios';
+import Axios from 'axios';
+
+const axios = Axios.create();
 
 axios.interceptors.request.use(
   (config) => {

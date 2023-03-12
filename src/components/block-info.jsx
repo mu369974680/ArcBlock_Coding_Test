@@ -9,9 +9,11 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import axios from '../libs/api.js';
 import styles from './styles.module.scss';
+import { updateHash } from '../store/hash';
 
 // const Item = styled(Card)(({ theme }) => ({
 //   backgroundColor: theme.palette.mode === 'dark' ? '#000' : '#fff',
@@ -20,6 +22,24 @@ import styles from './styles.module.scss';
 //   textAlign: 'left',
 //   // color: theme.palette.text.secondary,
 // }));
+
+function HashItem(props) {
+  const dispatch = useDispatch();
+  const handleClickHash = () => {
+    dispatch(updateHash(props.value));
+  };
+  return (
+    <Typography
+      variant="body1"
+      gutterBottom
+      noWrap
+      onClick={handleClickHash}
+      className={styles.hash}
+      title={`click to search for hash:${props.value}`}>
+      {props.value}
+    </Typography>
+  );
+}
 
 export default function BlockInfo(props) {
   const [blockInfo, setblockInfo] = useState({});
@@ -41,7 +61,7 @@ export default function BlockInfo(props) {
           setLoading(false);
         });
     }
-  }, [blockInfo.hash, props.hash]);
+  }, [props.hash]);
 
   return (
     <Card sx={{ minHeight: 600 }}>
@@ -59,9 +79,13 @@ export default function BlockInfo(props) {
                       <Typography variant="h6" gutterBottom className={styles.time}>
                         {blockKey.toUpperCase()}
                       </Typography>
-                      <Typography variant="body1" gutterBottom noWrap>
-                        {blockInfo[blockKey].toString()}
-                      </Typography>
+                      {blockKey === 'prev_block' || blockKey === 'next_block' ? (
+                        <HashItem value={blockInfo[blockKey].toString()} />
+                      ) : (
+                        <Typography variant="body1" gutterBottom noWrap>
+                          {blockInfo[blockKey].toString()}
+                        </Typography>
+                      )}
                     </div>
                   </Grid>
                 );

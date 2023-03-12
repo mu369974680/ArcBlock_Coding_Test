@@ -1,7 +1,9 @@
 // import { Link } from 'react-router-dom';
 // import Button from '@mui/material/Button';
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
 import Grid from '@mui/material/Unstable_Grid2';
 import FilledInput from '@mui/material/FilledInput';
 import SearchIcon from '@mui/icons-material/Search';
@@ -15,6 +17,7 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import TxTable from '../components/tx-table';
 import BlockInfo from '../components/block-info';
+import { updateHash } from '../store/hash';
 
 // import axios from '../libs/api.js';
 
@@ -23,13 +26,16 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 function Query() {
-  const [hash, setHash] = useState('');
+  const hash = useSelector((state) => state.hash.value);
+  const dispatch = useDispatch();
+
+  // const [hash, setHash] = useState('');
   const [hashInput, setHashInput] = useState('');
   const [open, setOpen] = useState(false);
 
   const handleClickSearchBtn = () => {
     if (hashInput.length === 64) {
-      setHash(hashInput);
+      dispatch(updateHash(hashInput));
     } else {
       setOpen(true);
     }
@@ -46,6 +52,10 @@ function Query() {
     setOpen(false);
   };
 
+  useEffect(() => {
+    setHashInput(hash);
+  }, [hash]);
+
   return (
     <>
       <Card sx={{ minWidth: 275 }} variant="outlined">
@@ -54,7 +64,7 @@ function Query() {
             <Grid xs={12}>
               <Card>
                 <CardContent>
-                  <FormControl sx={{ m: 1, width: '70ch' }} variant="outlined">
+                  <FormControl sx={{ m: 1, width: '70%' }} variant="outlined">
                     <InputLabel htmlFor="outlined-adornment-password">Input the blockchain`s hash</InputLabel>
                     <FilledInput
                       id="outlined-adornment-password"

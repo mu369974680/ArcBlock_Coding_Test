@@ -15,3 +15,12 @@
   text-align: left;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+.hash {
+  color: rgb(23, 125, 220);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    color: rgb(65, 156, 242);
+  }
+}

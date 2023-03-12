@@ -13,12 +13,26 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Collapse from '@mui/material/Collapse';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Unstable_Grid2';
 import { useState, useEffect } from 'react';
 import axios from '../libs/api.js';
 
 const getShortHash = (hash) => {
   return `${hash.substring(0, 4)}-${hash.substring(hash.length - 4, hash.length)}`;
 };
+
+function Tx(props) {
+  return (
+    <>
+      <Typography variant="body" gutterBottom component="div">
+        {props.address || 'Unknown'}
+      </Typography>
+      <Typography variant="body" gutterBottom component="div">
+        {props.value / 100000000} BTC
+      </Typography>
+    </>
+  );
+}
 
 function Row(props) {
   const { row } = props;
@@ -40,10 +54,10 @@ function Row(props) {
         </TableCell>
         <TableCell>
           <Typography variant="body" gutterBottom component="div">
-            {row.size} BTC
+            {row.out.reduce((prev, curr) => prev + curr.value, 0) / 100000000} BTC
           </Typography>
           <Typography variant="body" gutterBottom component="div">
-            Fee:{row.fee}
+            Fee:{row.fee / 1000}K
           </Typography>
         </TableCell>
         <TableCell>
@@ -56,25 +70,24 @@ function Row(props) {
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                History
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.out.map((outRow) => (
-                    <TableRow key={outRow.script}>
-                      <TableCell>{outRow.addr}</TableCell>
-                      <TableCell align="right">{outRow.value}</TableCell>
-                    </TableRow>
+              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid xs={12} md={6}>
+                  <Typography variant="h6" gutterBottom component="div">
+                    From
+                  </Typography>
+                  {row.inputs.map((input) => (
+                    <Tx address={input.prev_out.addr} value={input.prev_out.value} />
                   ))}
-                </TableBody>
-              </Table>
+                </Grid>
+                <Grid xs={12} md={6}>
+                  <Typography variant="h6" gutterBottom component="div">
+                    To
+                  </Typography>
+                  {row.out.map((out) => (
+                    <Tx address={out.addr} value={out.value} />
+                  ))}
+                </Grid>
+              </Grid>
             </Box>
           </Collapse>
         </TableCell>

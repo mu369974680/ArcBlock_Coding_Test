@@ -59,7 +59,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "sass": "^1.59.2"
   },
   "devDependencies": {
     "@arcblock/eslint-config": "^0.2.3",

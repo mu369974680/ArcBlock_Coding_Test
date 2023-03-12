@@ -14,8 +14,13 @@ import Collapse from '@mui/material/Collapse';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
+import { styled } from '@mui/material/styles';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
 import { useState, useEffect } from 'react';
 import axios from '../libs/api.js';
+import styles from './styles.module.scss';
 
 const getShortHash = (hash) => {
   return `${hash.substring(0, 4)}-${hash.substring(hash.length - 4, hash.length)}`;
@@ -24,7 +29,7 @@ const getShortHash = (hash) => {
 function Tx(props) {
   return (
     <>
-      <Typography variant="body" gutterBottom component="div">
+      <Typography variant="body" gutterBottom component="div" className={styles.address}>
         {props.address || 'Unknown'}
       </Typography>
       <Typography variant="body" gutterBottom component="div">
@@ -42,10 +47,10 @@ function Row(props) {
     <>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell>
-          <Typography variant="body" gutterBottom component="div">
+          <Typography variant="body" gutterBottom component="div" className={styles.address}>
             ID:{getShortHash(row.hash)}
           </Typography>
-          <Typography variant="body" gutterBottom component="div">
+          <Typography variant="body" gutterBottom component="div" className={styles.time}>
             {new Date(row.time * 1000).toISOString()}
           </Typography>
         </TableCell>
@@ -56,7 +61,7 @@ function Row(props) {
           <Typography variant="body" gutterBottom component="div">
             {row.out.reduce((prev, curr) => prev + curr.value, 0) / 100000000} BTC
           </Typography>
-          <Typography variant="body" gutterBottom component="div">
+          <Typography variant="body" gutterBottom component="div" className={styles.time}>
             Fee:{row.fee / 1000}K
           </Typography>
         </TableCell>
@@ -76,7 +81,7 @@ function Row(props) {
                     From
                   </Typography>
                   {row.inputs.map((input) => (
-                    <Tx address={input.prev_out.addr} value={input.prev_out.value} />
+                    <Tx address={input.prev_out.addr} value={input.prev_out.value} key={input.index} />
                   ))}
                 </Grid>
                 <Grid xs={12} md={6}>
@@ -84,7 +89,7 @@ function Row(props) {
                     To
                   </Typography>
                   {row.out.map((out) => (
-                    <Tx address={out.addr} value={out.value} />
+                    <Tx address={out.addr} value={out.value} key={out.tx_index} />
                   ))}
                 </Grid>
               </Grid>
@@ -140,45 +145,59 @@ export default function TxTable(props) {
     }
   }, [pageProp, props.hash]);
 
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    backgroundColor: theme.palette.action.hover,
+    border: 0,
+  }));
+
   return (
-    <Table size="small">
-      <TableHead>
-        <TableRow>
-          <TableCell>ID</TableCell>
-          <TableCell>Transaction</TableCell>
-          <TableCell>Amount</TableCell>
-          <TableCell>Operation </TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {pageData.rows.map((row) => (
-          <Row key={row.hash} row={row} />
-          // <TableRow key={row.hash}>
-          //   <TableCell>{row.hash}</TableCell>
-          //   <TableCell>{row.inputs.length}</TableCell>
-          //   <TableCell>{row.fee}</TableCell>
-          // </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-            colSpan={4}
-            count={pageData.total}
-            rowsPerPage={pageData.rowsPerPage}
-            page={pageData.page}
-            SelectProps={{
-              inputProps: {
-                'aria-label': 'rows per page',
-              },
-              native: true,
-            }}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </TableRow>
-      </TableFooter>
-    </Table>
+    <Card sx={{ minHeight: 600 }}>
+      <CardHeader title="Transaction`s Details" titleTypographyProps={{ align: 'left' }} />
+      <CardContent style={{ overflow: 'auto' }}>
+        {pageData.rows.length > 0 ? (
+          <Table size="small">
+            <TableHead>
+              <StyledTableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Transaction</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Operation </TableCell>
+              </StyledTableRow>
+            </TableHead>
+            <TableBody>
+              {pageData.rows.map((row) => (
+                <Row key={row.hash} row={row} />
+                // <TableRow key={row.hash}>
+                //   <TableCell>{row.hash}</TableCell>
+                //   <TableCell>{row.inputs.length}</TableCell>
+                //   <TableCell>{row.fee}</TableCell>
+                // </TableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                  colSpan={4}
+                  count={pageData.total}
+                  rowsPerPage={pageData.rowsPerPage}
+                  page={pageData.page}
+                  SelectProps={{
+                    inputProps: {
+                      'aria-label': 'rows per page',
+                    },
+                    native: true,
+                  }}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        ) : (
+          <div className={styles['no-data']}>There is no data</div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

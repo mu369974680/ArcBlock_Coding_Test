@@ -16,6 +16,10 @@ import Typography from '@mui/material/Typography';
 import { useState, useEffect } from 'react';
 import axios from '../libs/api.js';
 
+const getShortHash = (hash) => {
+  return `${hash.substring(0, 4)}-${hash.substring(hash.length - 4, hash.length)}`;
+};
+
 function Row(props) {
   const { row } = props;
   const [open, setOpen] = useState(false);
@@ -23,9 +27,25 @@ function Row(props) {
   return (
     <>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell>{row.hash}</TableCell>
-        <TableCell>{row.inputs.length}</TableCell>
-        <TableCell>{row.fee}</TableCell>
+        <TableCell>
+          <Typography variant="body" gutterBottom component="div">
+            ID:{getShortHash(row.hash)}
+          </Typography>
+          <Typography variant="body" gutterBottom component="div">
+            {new Date(row.time * 1000).toISOString()}
+          </Typography>
+        </TableCell>
+        <TableCell>
+          From {row.inputs.length} inputs to {row.out.length} outputs
+        </TableCell>
+        <TableCell>
+          <Typography variant="body" gutterBottom component="div">
+            {row.size} BTC
+          </Typography>
+          <Typography variant="body" gutterBottom component="div">
+            Fee:{row.fee}
+          </Typography>
+        </TableCell>
         <TableCell>
           <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
@@ -63,7 +83,7 @@ function Row(props) {
   );
 }
 
-export default function TxTable() {
+export default function TxTable(props) {
   const [pageData, setpageData] = useState({
     rows: [],
     page: 0,
@@ -91,27 +111,30 @@ export default function TxTable() {
   };
 
   useEffect(() => {
-    axios
-      .post('/api/blockchaintx', {
-        ...pageProp,
-      })
-      .then((response) => {
-        // console.log(response);
-        setpageData(response.data);
-      })
-      .catch(() => {
-        // console.log(error);
-      });
-  }, [pageProp]);
+    if (props.hash) {
+      axios
+        .post('/api/blockchaintx', {
+          ...pageProp,
+          hash: props.hash,
+        })
+        .then((response) => {
+          // console.log(response);
+          setpageData(response.data);
+        })
+        .catch(() => {
+          // console.log(error);
+        });
+    }
+  }, [pageProp, props.hash]);
 
   return (
     <Table size="small">
       <TableHead>
         <TableRow>
           <TableCell>ID</TableCell>
-          <TableCell>Name</TableCell>
-          <TableCell align="right">Sale Amount</TableCell>
-          <TableCell />
+          <TableCell>Transaction</TableCell>
+          <TableCell>Amount</TableCell>
+          <TableCell>Operation </TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -128,7 +151,7 @@ export default function TxTable() {
         <TableRow>
           <TablePagination
             rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-            colSpan={3}
+            colSpan={4}
             count={pageData.total}
             rowsPerPage={pageData.rowsPerPage}
             page={pageData.page}

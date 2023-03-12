@@ -8,6 +8,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 import TxTable from '../components/tx-table';
 import BlockInfo from '../components/block-info';
 
@@ -26,44 +28,45 @@ function Query() {
   };
 
   return (
-    <div>
-      {/* <h1>
-        <Link className="app-link" to="/">
-          Back Home
-        </Link>
-      </h1>
-      <h2>Hello, i'm a dapp blocklet</h2>
-
-      <Button variant="contained">Hello World</Button> */}
-
-      <Grid container spacing={2}>
-        <Grid xs={12}>
-          <FormControl sx={{ m: 1, width: '70ch' }} variant="outlined">
-            <InputLabel htmlFor="outlined-adornment-password">Input the blockchain`s hash</InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-password"
-              type="text"
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton aria-label="toggle password visibility" onClick={handleClickSearchBtn} edge="end">
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              }
-              value={hashInput}
-              label="Input the blockchain`s hash"
-              onChange={handleInputHash}
-            />
-          </FormControl>
+    <Card sx={{ minWidth: 275 }} variant="outlined">
+      <CardContent>
+        <Grid container spacing={2}>
+          <Grid xs={12}>
+            <Card>
+              <CardContent>
+                <FormControl sx={{ m: 1, width: '70ch' }} variant="outlined">
+                  <InputLabel htmlFor="outlined-adornment-password">Input the blockchain`s hash</InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-password"
+                    type="text"
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton aria-label="toggle password visibility" onClick={handleClickSearchBtn} edge="end">
+                          <SearchIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    value={hashInput}
+                    label="Input the blockchain`s hash"
+                    onChange={handleInputHash}
+                  />
+                </FormControl>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid xs={12} md={5}>
+            <BlockInfo hash={hash} />
+          </Grid>
+          <Grid xs={12} md={7}>
+            <Card sx={{ minHeight: 600 }}>
+              <CardContent>
+                <TxTable hash={hash} />
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-        <Grid xs={12} md={5}>
-          <BlockInfo hash={hash} />
-        </Grid>
-        <Grid xs={12} md={7}>
-          <TxTable />
-        </Grid>
-      </Grid>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 

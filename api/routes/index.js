@@ -1,52 +1,56 @@
+/* eslint-disable no-unused-vars */
 const middleware = require('@blocklet/sdk/lib/middlewares');
+const https = require('https');
 const router = require('express').Router();
 const logger = require('../libs/logger');
 const mockBlock = require('./mock.js');
-// const https = require('https');
-
 const Cache = require('./cache.js');
 
-router.use('/user', middleware.user(), (req, res) => res.json(req.user || {}));
-router.use('/blockchaininfo/:hash', middleware.user(), (req, res) => {
+function getBlockchain(hash) {
+  return new Promise((resolve, reject) => {
+    https
+      .get(`https://blockchain.info/rawblock/${hash}`, (response) => {
+        let result = '';
+
+        // called when a data chunk is received.
+        response.on('data', (chunk) => {
+          result += chunk;
+        });
+
+        // called when the complete response is received.
+        response.on('end', () => {
+          resolve(JSON.parse(result));
+        });
+      })
+      .on('error', (error) => {
+        reject(error);
+      });
+  });
+}
+
+// router.use('/user', middleware.user(), (req, res) => res.json(req.user || {}));
+router.use('/blockchaininfo/:hash', middleware.user(), async (req, res) => {
   // console.log(req.params.hash);
 
-  const blockchain = Cache.getData(req.params.hash);
+  let blockchain = Cache.getData(req.params.hash);
 
   if (blockchain) {
-    logger.info('命中缓存:', req.params.hash);
+    logger.info('hit cache:', req.params.hash);
     // res.json(blockchain);
   } else {
-    Cache.setData(mockBlock);
+    // blockchain = await getBlockchain(req.params.hash);
+    blockchain = mockBlock;
+
+    Cache.setData(blockchain);
   }
 
-  const copyResult = JSON.parse(JSON.stringify(mockBlock));
+  const copyResult = JSON.parse(JSON.stringify(blockchain));
 
   delete copyResult.tx;
   res.json(copyResult);
-
-  //   https
-  //     .get(
-  //       'https://blockchain.info/rawblock/00000000000000000007878ec04bb2b2e12317804810f4c26033585b3f81ffaa',
-  //       (response) => {
-  //         let result = '';
-
-  //         // called when a data chunk is received.
-  //         response.on('data', (chunk) => {
-  //           result += chunk;
-  //         });
-
-  //         // called when the complete response is received.
-  //         response.on('end', () => {
-  //           res.json(JSON.parse(result));
-  //         });
-  //       }
-  //     )
-  //     .on('error', (error) => {
-  //       console.log('Error: ' + error.message);
-  //     });
 });
 
-router.use('/blockchaintx', middleware.user(), (req, res) => {
+router.use('/blockchaintx', middleware.user(), async (req, res) => {
   // page index start with 0
   const { page, rowsPerPage } = req.body;
   let blockchain = Cache.getData(req.params.hash);
@@ -55,9 +59,10 @@ router.use('/blockchaintx', middleware.user(), (req, res) => {
     logger.info('命中缓存:', req.params.hash);
     // res.json(blockchain);
   } else {
-    Cache.setData(mockBlock);
+    // blockchain = await getBlockchain(req.params.hash);
 
     blockchain = mockBlock;
+    Cache.setData(blockchain);
 
     // res.json(mockBlock);
   }

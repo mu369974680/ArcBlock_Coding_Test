@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/prop-types */
 import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
@@ -7,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useState, useEffect } from 'react';
 import axios from '../libs/api.js';
 import styles from './styles.module.scss';
@@ -21,9 +23,11 @@ import styles from './styles.module.scss';
 
 export default function BlockInfo(props) {
   const [blockInfo, setblockInfo] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (props.hash) {
+      setLoading(true);
       axios
         .post(`/api/blockchaininfo/${props.hash}`)
         .then((response) => {
@@ -31,7 +35,10 @@ export default function BlockInfo(props) {
           setblockInfo(response.data);
         })
         .catch(() => {
-          // console.log(error);
+          setblockInfo({});
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   }, [blockInfo.hash, props.hash]);
@@ -40,7 +47,9 @@ export default function BlockInfo(props) {
     <Card sx={{ minHeight: 600 }}>
       <CardHeader title="Blockchain`s Information" titleTypographyProps={{ align: 'left' }} />
       <CardContent>
-        {Object.keys(blockInfo).length > 0 ? (
+        {loading ? (
+          <CircularProgress />
+        ) : Object.keys(blockInfo).length > 0 ? (
           <Box sx={{ width: '100%' }}>
             <Grid container rowSpacing={1} columnSpacing={0}>
               {Object.keys(blockInfo).map((blockKey) => {

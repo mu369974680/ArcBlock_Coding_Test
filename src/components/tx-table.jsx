@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/prop-types */
 // import * as React from 'react';
 import Table from '@mui/material/Table';
@@ -18,6 +19,7 @@ import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useState, useEffect } from 'react';
 import axios from '../libs/api.js';
 import styles from './styles.module.scss';
@@ -112,6 +114,7 @@ export default function TxTable(props) {
     page: 0,
     rowsPerPage: 10,
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     setpageProp({
@@ -130,6 +133,7 @@ export default function TxTable(props) {
 
   useEffect(() => {
     if (props.hash) {
+      setLoading(true);
       axios
         .post('/api/blockchaintx', {
           ...pageProp,
@@ -140,7 +144,10 @@ export default function TxTable(props) {
           setpageData(response.data);
         })
         .catch(() => {
-          // console.log(error);
+          setpageData([]);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   }, [pageProp, props.hash]);
@@ -154,7 +161,9 @@ export default function TxTable(props) {
     <Card sx={{ minHeight: 600 }}>
       <CardHeader title="Transaction`s Details" titleTypographyProps={{ align: 'left' }} />
       <CardContent style={{ overflow: 'auto' }}>
-        {pageData.rows.length > 0 ? (
+        {loading ? (
+          <CircularProgress />
+        ) : pageData.rows.length > 0 ? (
           <Table size="small">
             <TableHead>
               <StyledTableRow>

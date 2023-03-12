@@ -5,8 +5,9 @@ Cache.setData = (blockchain) => {
   if (!this.cacheData) {
     this.cacheData = new Cache();
   }
-
-  this.cacheData[blockchain.hash] = blockchain;
+  if (blockchain.hash) {
+    this.cacheData[blockchain.hash] = blockchain;
+  }
 };
 
 Cache.getData = (hash) => {

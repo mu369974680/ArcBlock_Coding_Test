@@ -35,7 +35,7 @@ function HashItem(props) {
       noWrap
       onClick={handleClickHash}
       className={styles.hash}
-      title={`click to search for hash:${props.value}`}>
+      title={`click to search of hash:${props.value}`}>
       {props.value}
     </Typography>
   );

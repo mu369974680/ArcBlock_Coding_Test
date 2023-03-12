@@ -31,7 +31,7 @@ const getShortHash = (hash) => {
 function Tx(props) {
   return (
     <>
-      <Typography variant="body" gutterBottom component="div" className={styles.address}>
+      <Typography variant="body" gutterBottom component="div" className={styles.address} noWrap>
         {props.address || 'Unknown'}
       </Typography>
       <Typography variant="body" gutterBottom component="div">

@@ -144,7 +144,12 @@ export default function TxTable(props) {
           setpageData(response.data);
         })
         .catch(() => {
-          setpageData([]);
+          setpageData({
+            rows: [],
+            page: 0,
+            rowsPerPage: 10,
+            total: 0,
+          });
         })
         .finally(() => {
           setLoading(false);

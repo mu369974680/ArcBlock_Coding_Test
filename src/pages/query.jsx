@@ -44,6 +44,13 @@ function Query() {
   const handleInputHash = (e) => {
     setHashInput(e.target.value);
   };
+
+  const handleKeyDown = (e) => {
+    // console.log(e);
+    if (e.keyCode === 13) {
+      handleClickSearchBtn();
+    }
+  };
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -79,6 +86,7 @@ function Query() {
                       value={hashInput}
                       label="Input the blockchain`s hash"
                       onChange={handleInputHash}
+                      onKeyDown={handleKeyDown}
                     />
                   </FormControl>
                 </CardContent>

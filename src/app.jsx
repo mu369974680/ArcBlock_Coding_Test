@@ -19,11 +19,11 @@ function App() {
       <CssBaseline />
       <div className="app">
         <Routes>
-          <Route exact path="/" element={<Home />} />
+          <Route exact path="/" element={<Query />} />
           <Route path="/about" element={<About />} />
           <Route path="/home" element={<Home />} />
           <Route path="/query" element={<Query />} />
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="*" element={<Navigate to="/query" />} />
         </Routes>
       </div>
     </ThemeProvider>
